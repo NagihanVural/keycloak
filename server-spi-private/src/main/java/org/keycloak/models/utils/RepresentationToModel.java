@@ -512,6 +512,7 @@ public class RepresentationToModel {
                         for (Map.Entry<String, List<String>> attribute : roleRep.getAttributes().entrySet()) {
                             role.setAttribute(attribute.getKey(), attribute.getValue());
                         }
+                    }
                 }
             }
         }
