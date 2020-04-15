@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
@@ -135,18 +136,17 @@ public class ImportUtils {
     }
 
     public static Map<String, RealmRepresentation> getRealmsFromStream(ObjectMapper mapper, InputStream is) throws IOException {
-        Map<String, RealmRepresentation> result = new HashMap<String, RealmRepresentation>();
+        Map<String, RealmRepresentation> result = new HashMap<>();
 
         JsonFactory factory = mapper.getFactory();
-        JsonParser parser = factory.createParser(is);
-        try {
+        try (JsonParser parser = factory.createParser(is)) {
             parser.nextToken();
 
             if (parser.getCurrentToken() == JsonToken.START_ARRAY) {
                 // Case with more realms in stream
                 parser.nextToken();
 
-                List<RealmRepresentation> realmReps = new ArrayList<RealmRepresentation>();
+                List<RealmRepresentation> realmReps = new ArrayList<>();
                 while (parser.getCurrentToken() == JsonToken.START_OBJECT) {
                     RealmRepresentation realmRep = parser.readValueAs(RealmRepresentation.class);
                     parser.nextToken();
@@ -167,8 +167,6 @@ public class ImportUtils {
                 RealmRepresentation realmRep = parser.readValueAs(RealmRepresentation.class);
                 result.put(realmRep.getRealm(), realmRep);
             }
-        } finally {
-            parser.close();
         }
 
         return result;
@@ -179,8 +177,7 @@ public class ImportUtils {
     public static void importUsersFromStream(KeycloakSession session, String realmName, ObjectMapper mapper, InputStream is) throws IOException {
         RealmProvider model = session.realms();
         JsonFactory factory = mapper.getJsonFactory();
-        JsonParser parser = factory.createJsonParser(is);
-        try {
+        try (JsonParser parser = factory.createJsonParser(is)) {
             parser.nextToken();
 
             while (parser.nextToken() == JsonToken.FIELD_NAME) {
@@ -198,7 +195,7 @@ public class ImportUtils {
                     }
 
                     // TODO: support for more transactions per single users file (if needed)
-                    List<UserRepresentation> userReps = new ArrayList<UserRepresentation>();
+                    List<UserRepresentation> userReps = new ArrayList<>();
                     while (parser.getCurrentToken() == JsonToken.START_OBJECT) {
                         UserRepresentation user = parser.readValueAs(UserRepresentation.class);
                         userReps.add(user);
@@ -212,8 +209,6 @@ public class ImportUtils {
                     }
                 }
             }
-        } finally {
-            parser.close();
         }
     }
 
@@ -221,8 +216,7 @@ public class ImportUtils {
     public static void importFederatedUsersFromStream(KeycloakSession session, String realmName, ObjectMapper mapper, InputStream is) throws IOException {
         RealmProvider model = session.realms();
         JsonFactory factory = mapper.getJsonFactory();
-        JsonParser parser = factory.createJsonParser(is);
-        try {
+        try (JsonParser parser = factory.createJsonParser(is)) {
             parser.nextToken();
 
             while (parser.nextToken() == JsonToken.FIELD_NAME) {
@@ -240,7 +234,7 @@ public class ImportUtils {
                     }
 
                     // TODO: support for more transactions per single users file (if needed)
-                    List<UserRepresentation> userReps = new ArrayList<UserRepresentation>();
+                    List<UserRepresentation> userReps = new ArrayList<>();
                     while (parser.getCurrentToken() == JsonToken.START_OBJECT) {
                         UserRepresentation user = parser.readValueAs(UserRepresentation.class);
                         userReps.add(user);
@@ -254,8 +248,6 @@ public class ImportUtils {
                     }
                 }
             }
-        } finally {
-            parser.close();
         }
     }
 
